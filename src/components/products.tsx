@@ -15,10 +15,52 @@ const Products = () => {
       price: 999.99,
       rating: 4.4,
     },
+    {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product3.jpg",
+        price: 999.99,
+        rating: 4.4,
+      },
+      {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product3.webp",
+        price: 999.99,
+        rating: 4.4,
+      },
+      {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product4.jpg",
+        price: 999.99,
+        rating: 4.4,
+      }, 
+      {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product6.jpg",
+        price: 999.99,
+        rating: 4.4,
+      },
+      {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product7.jpg",
+        price: 999.99,
+        rating: 4.4,
+      },
+      {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product8.jpg",
+        price: 999.99,
+        rating: 4.4,
+      },
+      {
+        name: "AUTOMET Women Shirts Summer Sweaters Short Sleeve Tunic Tops 2025 Dressy Casual Business Blouses",
+        image: "/product9.jpg",
+        price: 999.99,
+        rating: 4.4,
+      },
   ];
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="grid grid-cols-3 items-center justify-center min-h-screen bg-gray-100 p-4">
       {ProductList.map((product, index) => (
         <div key={index} className="bg-white p-6 m-4 rounded-xl shadow-md w-full max-w-sm">
           <Image src={product.image} alt={product.name} height={500} width={500} className="w-full h-60 object-cover rounded-md mb-4" />

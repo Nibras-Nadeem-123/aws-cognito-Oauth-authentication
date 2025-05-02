@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -15,125 +15,126 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import { useState } from "react"
+import { useRouter } from "next/navigation" // ✅ app router
+import { signIn } from "@/lib/auth"
 
-// Step 1: Define the schema
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 })
 
-type LoginFormData = z.infer<typeof loginSchema>
+type LoginSchema = z.infer<typeof loginSchema>
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  // Step 2: Setup useForm with zod
+export function LoginForm() {
+  const [authError, setAuthError] = useState("")
+  const router = useRouter()
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+    formState: { errors, isSubmitting },
+  } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
   })
 
-  // Step 3: Handle form submission
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Form submitted:", data)
-    // You can call your API or auth function here
+  const onSubmit = async (data: LoginSchema) => {
+    setAuthError("")
+    try {
+      const user = await signIn(data.email, data.password)
+      console.log("Signed in:", user)
+      router.push("/dashboard")
+    } catch (error: any) {
+      console.error("Error signing in:", error.message)
+      setAuthError("Invalid email or password.")
+    }
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Login with your Apple or Google account
-          </CardDescription>
+          <CardDescription>Login with your Apple or Google account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-6">
-              <div className="flex flex-col gap-4">
-                <Button
-                  variant="outline"
-                  className="w-full bg-gray-800 hover:text-white text-white hover:bg-gray-700 hover:scale-105 duration-500"
-                  type="button"
-                >
-                  {/* Apple Icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2">
-                    <path
-                      d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  Login with Apple
-                </Button>
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
+            {/* Social login buttons (placeholders) */}
+            <div className="flex flex-col gap-4">
+              <Button variant="outline" className="w-full bg-gray-800 text-white hover:bg-gray-700">
+                {/* Apple icon */}
+                <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.152 6.896c-...z" />
+                </svg>
+                Login with Apple
+              </Button>
 
-                <Button
-                  variant="outline"
-                  className="w-full bg-gray-800 hover:text-white text-white hover:bg-gray-700 hover:scale-105 duration-500"
-                  type="button"
-                >
-                  {/* Google Icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2">
-                    <path
-                      d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  Login with Google
-                </Button>
+              <Button variant="outline" className="w-full bg-gray-800 text-white hover:bg-gray-700">
+                {/* Google icon */}
+                <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.48 10.92v...z" />
+                </svg>
+                Login with Google
+              </Button>
+            </div>
+
+            <div className="relative text-center text-sm">
+              <span className="relative z-10 bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+              <div className="absolute inset-0 flex items-center border-t border-border" />
+            </div>
+
+            {/* Email */}
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" {...register("email")} placeholder="m@example.com" />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            </div>
+
+            {/* Password */}
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <a href="#" className="ml-auto text-sm underline hover:underline-offset-4">
+                  Forgot your password?
+                </a>
               </div>
+              <Input id="password" type="password" {...register("password")} />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            </div>
 
-              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
+            {/* Auth error */}
+            {authError && <p className="text-red-500 text-sm text-center">{authError}</p>}
 
-              <div className="grid gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="m@example.com" {...register("email")} />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                  )}
-                </div>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-gray-800 text-white hover:bg-gray-700"
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </Button>
 
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Input id="password" type="password" {...register("password")} />
-                  {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-                  )}
-                </div>
-
-                <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-700 hover:scale-105 duration-500">
-                  Login
-                </Button>
-              </div>
-
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href={"/signup"} className="underline underline-offset-4">
-                  Sign up
-                </Link>
-              </div>
+            <div className="text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link href="/auth/signup" className="underline underline-offset-4">
+                Sign up
+              </Link>
             </div>
           </form>
         </CardContent>
       </Card>
 
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+      <div className="text-center text-xs text-muted-foreground">
+        By clicking continue, you agree to our{" "}
+        <a href="#" className="underline hover:text-primary">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="underline hover:text-primary">
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   )
