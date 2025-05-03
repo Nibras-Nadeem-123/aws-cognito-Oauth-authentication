@@ -1,148 +1,163 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema, SignupSchemaType } from "@/schemas/signup-schema";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { confirmSignUp, signUp } from "@/lib/auth";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { signUp } from "@/lib/auth"
 
-export default function SignupForm({
-  className,
-}: React.ComponentPropsWithoutRef<"div">) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignupSchemaType>({
-    resolver: zodResolver(signupSchema),
-  });
+export default function SignUpForm() {
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const [codeSent, setCodeSent] = useState(false);
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [serverError, setServerError] = useState("");
-  const router = useRouter();
+  // Email validation  
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-  const handleSignUp = async (data: SignupSchemaType) => {
-    setServerError("");
-    try {
-      setEmail(data.email); // store email for confirmation
-      await signUp(data.email, data.password);
-      setCodeSent(true);
-    } catch (error: any) {
-      setServerError(error.message || "Signup failed");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setIsSubmitting(true)
+
+    // Validate email
+    if (!email || !emailRegex.test(email)) {
+      setError("Please enter a valid email address.")
+      setIsSubmitting(false)
+      return
     }
-  };
 
-  const handleConfirm = async () => {
-    try {
-      await confirmSignUp(email, code);
-      router.push("/signin");
-    } catch (error: any) {
-      setServerError(error.message || "Confirmation failed");
+    // Validate password match
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setIsSubmitting(false)
+      return
     }
-  };
+
+    // Check password strength
+    if (password.length < 6) {
+      setError("Password should be at least 6 characters long.")
+      setIsSubmitting(false)
+      return
+    }
+
+    try {
+      await signUp(email, password )
+      router.push(`/auth/verify?email=${encodeURIComponent(email)}`)
+    } catch (err: any) {
+      setError(err.message || "Failed to sign up")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
-    <div className={cn("flex justify-center px-4 pb-8 sm:px-6 lg:px-8 py-10", className)}>
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">Create an account</CardTitle>
-            <CardDescription>
-              Sign up with Apple or Google to get started
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!codeSent ? (
-              <form onSubmit={handleSubmit(handleSignUp)}>
-                <div className="grid gap-6">
-                  {/* Social Signups */}
-                  <div className="flex flex-col gap-4">
-                    <Button variant="outline" className="w-full flex items-center justify-center gap-2 bg-gray-800 cursor-pointer text-white hover:bg-gray-700 hover:scale-105 duration-500">
-                      {/* Apple Icon */}
-                       Sign up with Apple
-                    </Button>
-                    <Button variant="outline" className="w-full flex items-center justify-center gap-2 bg-gray-800 text-white cursor-pointer hover:bg-gray-700 hover:scale-105 duration-500">
-                      {/* Google Icon */}
-                      G Sign up with Google
-                    </Button>
-                  </div>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-gray-800">Create Account</h2>
+        <p className="text-center text-gray-600 mb-6">Sign up with your email</p>
 
-                  <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                    <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Social login buttons */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              className="w-full py-3 px-4 border border-gray-300 rounded-md text-black hover:bg-gray-100 focus:outline-none flex items-center justify-center"
+              disabled={isSubmitting}
+            >
+              {/* Apple Icon */}
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.152 6.896c-...z" />
+              </svg>
+              Sign up with Apple
+            </button>
 
-                  <div className="grid gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" type="text" placeholder="John Doe" {...register("name")} />
-                      {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="m@example.com" {...register("email")} />
-                      {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input id="password" type="password" {...register("password")} />
-                      {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-                    </div>
-                    <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-700 hover:scale-105 duration-500">
-                      Create Account
-                    </Button>
-                  </div>
+            <button
+              type="button"
+              className="w-full py-3 px-4 border border-gray-300 rounded-md text-black hover:bg-gray-100 focus:outline-none flex items-center justify-center"
+              disabled={isSubmitting}
+            >
+              {/* Google Icon */}
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.48 10.92v...z" />
+              </svg>
+              Sign up with Google
+            </button>
+          </div>
 
-                  {serverError && <p className="text-center text-sm text-red-600 mt-2">{serverError}</p>}
+          <div className="relative text-center text-sm">
+            <span className="absolute inset-0 flex items-center border-t border-gray-300" />
+            <span className="relative z-10 bg-white px-2 text-gray-500">Or continue with</span>
+          </div>
 
-                  <div className="text-center text-sm">
-                    Already have an account?{" "}
-                    <Link href="/auth/login" className="underline underline-offset-4">
-                      Login
-                    </Link>
-                  </div>
-                </div>
-              </form>
-            ) : (
-              <div className="space-y-4">
-                <p>We’ve sent a verification code to your email. Please confirm to complete signup.</p>
-                <Input
-                  placeholder="Enter verification code"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                />
-                <Button onClick={handleConfirm} className="w-full bg-gray-800 text-white hover:bg-gray-700 hover:scale-105 duration-500">
-                  Confirm Account
-                </Button>
-                {serverError && <p className="text-sm text-red-600">{serverError}</p>}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          {/* Email */}
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-600">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="m@example.com"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+              aria-invalid={!!error}
+            />
+          </div>
 
-        <div className="mt-4 text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-          By creating an account, you agree to our{" "}
-          <Link href="">Terms of Service</Link> and{" "}
-          <Link href="">Privacy Policy</Link>.
+          {/* Password */}
+          <div className="space-y-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-600">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="********"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div className="space-y-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="********"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3 px-4 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none"
+          >
+            {isSubmitting ? "Signing up..." : "Sign Up"}
+          </button>
+
+          <div className="text-center text-sm">
+            Already have an account?{" "}
+            <a href="/auth/login" className="text-indigo-600 hover:underline">Log in</a>
+          </div>
+        </form>
+
+        <div className="text-center text-xs text-gray-500 mt-6">
+          By clicking continue, you agree to our{" "}
+          <a href="#" className="text-indigo-600 hover:underline">Terms of Service</a> and{" "}
+          <a href="#" className="text-indigo-600 hover:underline">Privacy Policy</a>.
         </div>
       </div>
     </div>
-  );
+  )
 }
