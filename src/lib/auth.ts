@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-// Import necessary AWS Cognito commands and types from the SDK
+// import necessary AWS cognito commands and types from the SDK
 import {
   CognitoIdentityProviderClient,
   ConfirmForgotPasswordCommand,
@@ -29,7 +29,7 @@ export async function signIn(email: string, password: string) {
     AuthFlow: "USER_PASSWORD_AUTH", // Use password-based auth flow
     ClientId: ClientId,
     AuthParameters: {
-      USERNAME: email.split("@")[0], // Use email as the username
+      USERNAME: email , // Use email as the username
       PASSWORD: password,
     },
   };
@@ -49,7 +49,7 @@ export async function signIn(email: string, password: string) {
 export async function signUp(email: string, password: string) {
   const input: SignUpCommandInput = {
     ClientId: ClientId,
-    Username: email.split("@")[0], // Use email as the username, even though it's an alias
+    Username: email , // Use email as the username, even though it's an alias
     Password: password,
     UserAttributes: [
       {
@@ -74,7 +74,7 @@ export async function signUp(email: string, password: string) {
 export async function confirmSignUp(email: string, code: string) {
   const input: ConfirmSignUpCommandInput = {
     ClientId: ClientId,
-    Username: email.split("@")[0], // Pass email as the username
+    Username: email , // Pass email as the username
     ConfirmationCode: code,
   };
 
@@ -93,7 +93,7 @@ export async function confirmSignUp(email: string, code: string) {
 export async function sendResetEmail(email: string): Promise<void> {
   const input: ForgotPasswordCommandInput = {
     ClientId: ClientId,
-    Username: email.split("@")[0], // Use email as the username
+    Username: email , // Use email as the username
   };
 
   try {
@@ -122,3 +122,9 @@ export async function confirmPasswordReset(email: string, code: string, newPassw
     throw new Error("Failed to reset password. Please try again.");
   }
 }
+
+
+
+
+
+// use .split("@")[0] to get the username from email
