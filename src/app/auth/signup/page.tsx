@@ -3,7 +3,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signUp } from "@/lib/auth"
+import { redirectToGoogleOAuth, signUp } from "@/lib/auth"
+// import { signInWithGoogle } from '@/lib/auth';
 
 export default function SignUpForm() {
   const router = useRouter()
@@ -14,6 +15,14 @@ export default function SignUpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
  
+  // const handleGoogleLogin = () => {
+  //   signInWithGoogle({
+  //     domain: 'https://your-cognito-domain.auth.region.amazoncognito.com',
+  //     clientId: 'your-app-client-id',
+  //     redirectUri: 'https://yourdomain.com/callback',
+  //   });
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -57,7 +66,39 @@ export default function SignUpForm() {
         <p className="text-center text-gray-600 mb-6">Sign up with your email</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-         
+          {/* Social login buttons */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              className="w-full py-3 px-4 border border-gray-300 rounded-md text-black hover:bg-gray-100 focus:outline-none flex items-center justify-center"
+              disabled={isSubmitting}
+            >
+              {/* Apple Icon */}
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.152 6.896c-...z" />
+              </svg>
+              Sign up with Apple
+            </button>
+
+            <button
+              type="button"
+              className="w-full py-3 px-4 border border-gray-300 rounded-md text-black hover:bg-gray-100 focus:outline-none flex items-center justify-center"
+              disabled={isSubmitting}
+              onClick={redirectToGoogleOAuth}
+            >
+              {/* Google Icon */}
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.48 10.92v...z" />
+              </svg>
+              Sign up with Google
+            </button>
+          </div>
+
+          <div className="relative text-center text-sm">
+            <span className="absolute inset-0 flex items-center border-t border-gray-300" />
+            <span className="relative z-10 bg-white px-2 text-gray-500">Or continue with</span>
+          </div>
+
           {/* Email */}
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-gray-600">Email</label>

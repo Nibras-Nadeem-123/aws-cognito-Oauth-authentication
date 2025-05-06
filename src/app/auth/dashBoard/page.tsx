@@ -13,7 +13,7 @@ export default function DashboardPage() {
     const token = localStorage.getItem("accessToken")
 
     if (!token) {
-      router.push("/login") // Redirect if not authenticated
+      router.push("/auth/login") // Redirect if not authenticated
     } else {
       const email = localStorage.getItem("userEmail")
       setUserEmail(email || "Unknown User")

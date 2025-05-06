@@ -1,5 +1,6 @@
+"use client"
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use server";
+
 
 // import necessary AWS cognito commands and types from the SDK
 import {
@@ -22,6 +23,13 @@ const region = "us-east-1";
 const client = new CognitoIdentityProviderClient({
   region
 });
+
+// type GoogleAuthConfig = {
+//   domain: string;
+//   clientId: string;
+//   redirectUri: string;
+// };
+
 
 // Function to sign in a user with email and password
 export async function signIn(email: string, password: string) {
@@ -123,8 +131,41 @@ export async function confirmPasswordReset(email: string, code: string, newPassw
   }
 }
 
+export function redirectToGoogleOAuth() {
+  const domain = "http://nibras.auth.us-east-1.amazoncognito.com";
+  const clientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
+  // const redirectUrl = "http://localhost:3000/auth/callback/google"; // e.g., http://localhost:3000/auth/callback
+  const responseType = "code"; 
+  console.log(domain)
+  console.log(clientId)
+  // console.log(redirectUrl)
+  const loginUrl = `${domain}/oauth2/authorize?response_type=${responseType}&client_id=${clientId}&identity_provider=Google`;
 
+  window.location.href = loginUrl;
+}
 
+// export async function handleGoogleOAuthCallback(code: GoogleAuthConfig) {
+//   try {
+//     // Now you need to exchange the authorization code for AWS Cognito tokens (ID token, access token)
+//     const input: InitiateAuthCommandInput = {
+//       AuthFlow: 'USER_SRP_AUTH',  // Use Cognito's standard SRP flow
+//       ClientId: ClientId,
+//       AuthParameters: {
+//         CODE: code.domain,  // Extract the appropriate string value from GoogleAuthConfig
+//       },
+//     };
+
+//     const command = new InitiateAuthCommand(input);
+//     const response = await client.send(command);
+
+//     // The response will contain tokens that you can use to authenticate the user with AWS
+//     console.log('Cognito Authentication Response:', response);
+//     return response;
+//   } catch (error: any) {
+//     console.error('Error during Google OAuth callback:', error.message);
+//     throw new Error('Failed to complete Google sign-in.');
+//   }
+// }
 
 
 // use .split("@")[0] to get the username from email
