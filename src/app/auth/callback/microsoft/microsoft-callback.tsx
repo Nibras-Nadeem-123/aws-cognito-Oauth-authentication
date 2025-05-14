@@ -14,7 +14,7 @@ export default function MicrosoftCallback() {
         try {
           // Exchange code for tokens
           const clientId = process.env.NEXT_PUBLIC_CLIENT_ID
-          const redirectUri = `${process.env.NEXT_PUBLIC_VERCEL_DOMAIN }/auth/callback/microsoft`
+          const redirectUri = `https://aws-cognito-oauth-authentication.vercel.app/auth/callback/microsoft`
             
           const tokenRes = await fetch("https://nibraspool-app.auth.us-east-1.amazoncognito.com/oauth2/token", {
             method: "POST",
