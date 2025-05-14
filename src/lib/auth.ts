@@ -127,7 +127,7 @@ export async function confirmPasswordReset(email: string, code: string, newPassw
 export function redirectToGoogleOAuth() {
   const domain = "https://nibraspool-app.auth.us-east-1.amazoncognito.com";
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
-  const redirectUrl = "http://localhost:3000/auth/callback/google"; // e.g., http://localhost:3000/auth/callback
+  const redirectUrl = `${process.env.VERCEL_DOMAIN}/auth/callback/google`;  
   const responseType = "code"; 
   console.log(domain)
   console.log(clientId)
@@ -140,7 +140,7 @@ export function redirectToGoogleOAuth() {
 export const redirectToMicrosoftOAuth = () => {
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
   const domain = "https://nibraspool-app.auth.us-east-1.amazoncognito.com";
-  const redirectUrl = "http://localhost:3000/auth/callback/microsoft"; 
+  const redirectUrl = `${process.env.VERCEL_DOMAIN}/auth/callback/microsoft`; 
   
   const login = `${domain}/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUrl}&identity_provider=Microsoft`;
   window.location.href = login

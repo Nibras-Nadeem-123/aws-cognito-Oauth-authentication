@@ -13,9 +13,6 @@ export default function LoginForm() {
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // const handleGoogleLogin = () => {
-  //   console.error("Google login is not implemented.");
-  // };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

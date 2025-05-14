@@ -14,14 +14,7 @@ export default function SignUpForm() {
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
- 
-  // const handleGoogleLogin = () => {
-  //   signInWithGoogle({
-  //     domain: 'https://your-cognito-domain.auth.region.amazoncognito.com',
-  //     clientId: 'your-app-client-id',
-  //     redirectUri: 'https://yourdomain.com/callback',
-  //   });
-  // };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

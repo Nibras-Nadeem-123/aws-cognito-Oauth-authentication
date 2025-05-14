@@ -15,7 +15,7 @@ export default function GoogleCallback() {
         try {
           // Exchange code for tokens
           const clientId = process.env.NEXT_PUBLIC_CLIENT_ID
-          const redirectUri = "http://localhost:3000/auth/callback/google"
+          const redirectUri = `${process.env.VERCEL_DOMAIN}/auth/callback/google`
 
           const tokenRes = await fetch("https://nibraspool-app.auth.us-east-1.amazoncognito.com/oauth2/token", {
             method: "POST",
