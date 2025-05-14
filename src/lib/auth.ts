@@ -140,11 +140,12 @@ export function redirectToGoogleOAuth() {
 export const redirectToMicrosoftOAuth = () => {
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
   const domain = "https://nibraspool-app.auth.us-east-1.amazoncognito.com";
-  const redirectUrl = `${window.location.origin}/auth/callback/microsoft`; 
-  
-  const login = `${domain}/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUrl}&identity_provider=Microsoft`;
-  window.location.href = login
-}
+  const redirectUrl = `${window.location.origin}/auth/callback/microsoft`;
+
+  const login = `${domain}/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUrl)}&identity_provider=Microsoft`;
+
+  window.location.href = login;
+};
 
 //  
 // use .split("@")[0] to get the username from email
