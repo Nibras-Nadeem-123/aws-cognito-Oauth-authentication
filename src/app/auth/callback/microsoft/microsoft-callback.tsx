@@ -14,8 +14,8 @@ export default function MicrosoftCallback() {
         try {
           // Exchange code for tokens
           const clientId = process.env.NEXT_PUBLIC_CLIENT_ID
-          const redirectUri = `https://aws-cognito-oauth-authentication.vercel.app/auth/callback/microsoft`
-            
+          const redirectUri = `${window.location.origin}/auth/callback/microsoft`
+
           const tokenRes = await fetch("https://nibraspool-app.auth.us-east-1.amazoncognito.com/oauth2/token", {
             method: "POST",
             headers: {
@@ -47,7 +47,7 @@ export default function MicrosoftCallback() {
           // Store email and username in localStorage
           localStorage.setItem("accessToken", tokenData.access_token)
           localStorage.setItem("email", userInfo.email)
-          localStorage.setItem("username", userInfo.email.split("@")[0]) // 👈 username
+          localStorage.setItem("username", userInfo.email.split("@")[0]) //  username
 
           router.push("/auth/dashBoard")
         } catch (err) {
