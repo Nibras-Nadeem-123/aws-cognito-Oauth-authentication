@@ -7,16 +7,16 @@ import LogoutButton from "@/components/logoutButton"
 export default function DashboardPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [userEmail, setUserEmail] = useState("")
+  const [username, setUserName] = useState<string | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken")
-
+    const username = localStorage.getItem("username")
     if (!token) {
       router.push("/auth/login") // Redirect if not authenticated
     } else {
-      const email = localStorage.getItem("userEmail")
-      setUserEmail(email || "Unknown User")
+       console.log(username)
+      setUserName(username)
       setLoading(false)
     }
   }, [router])
@@ -36,7 +36,7 @@ export default function DashboardPage() {
       <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
         <h1 className="text-3xl font-semibold text-gray-800 mb-4">Welcome to Your Dashboard</h1>
         <p className="text-lg text-gray-600">
-          Logged in as: <strong className="text-indigo-600">{userEmail}</strong>
+          Logged in as: <strong className="text-indigo-600">{username}</strong>
         </p>
       </div>
 

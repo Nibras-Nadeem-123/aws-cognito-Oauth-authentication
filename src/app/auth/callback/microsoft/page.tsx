@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react'
-import VerifyCodeForm from './verify'
+import MicrosoftCallback from './microsoft-callback'
 
 const page = () => {
   return (
     <Suspense fallback={<div>Loading....</div>}>
-      <VerifyCodeForm/>
+      <MicrosoftCallback />
     </Suspense>
   )
 }

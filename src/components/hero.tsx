@@ -1,16 +1,33 @@
-import React from 'react'
+import React from 'react';
 
 const Hero = () => {
   return (
-    <div className='relative bg-[url("/main-background.avif")] bg-cover bg-center h-screen w-screen -mt-20'>
-      <div className='absolute inset-0 bg-black/50 text-center'>
-        <p className='mt-20 text-white text-[30px] ' > Welcome to Buyyer - Your One-Stop Online Marketplace!</p>
-        <p className='mt-80 w-2xl mx-auto text-[20px] text-white'>At Buyyer, we bring you a seamless shopping experience with thousands of quality products across every category - from fashion and electronics to beauty, home, and more!</p>
-        <p className='text-green-500 my-2 text-[20px] '>Catch the hottest offers before they're gone!</p>
-        <button className='bg-gray-800 text-white py-3 px-5 hover:shadow shadow-white rounded-md cursor-pointer hover:bg-gray-700 hover:scale-105 duration-500'>Get Started</button>
-      </div>
-    </div>
-  )
-}
+    <section className="relative h-screen w-screen -mt-20">
+      {/* Background image with girl centered */}
+      <div className="absolute inset-0 bg-[url('/main-background.avif')] bg-cover bg-center z-0" />
 
-export default Hero
+      {/* Gradient overlay only on text side */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent z-10" />
+
+      {/* Content */}
+      <div className="relative z-20 pt-24 flex h-full px-8 md:px-5">
+        <div className="max-w-xl text-white">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+            Welcome to <span className="text-emerald-400">Buyyer</span>
+          </h1>
+          <p className="text-lg md:text-2xl text-gray-200 mb-4 leading-relaxed">
+            Discover top deals on fashion, electronics, beauty, and home essentials—all in one place.
+          </p>
+          <p className="text-emerald-400 text-base md:text-xl font-medium mb-8">
+            Catch the hottest offers before they&apos;re gone!
+          </p>
+          <button className="bg-emerald-500 cursor-pointer hover:bg-emerald-600 text-white font-medium text-base mt-40 md:text-lg px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+            Get Started
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
