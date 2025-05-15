@@ -142,7 +142,7 @@ export const redirectToMicrosoftOAuth = () => {
   const domain = "https://nibraspool-app.auth.us-east-1.amazoncognito.com";
   const redirectUrl = `${window.location.origin}/auth/callback/microsoft`;
 
-  const login = `${domain}/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUrl)}&identity_provider=Microsoft`;
+  const login = `${domain}/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUrl}&identity_provider=Microsoft`;
 
   window.location.href = login;
 };
