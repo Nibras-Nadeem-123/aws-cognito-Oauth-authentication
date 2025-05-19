@@ -15,35 +15,15 @@ phases:
 
   post_build:
     commands:
-      - echo Deploying to EC2 via SSM...
+      - echo Deploying and starting app on EC2 via SSM...
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
           --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Build Next.js App on EC2" \
-          --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","git pull","npm install","npm run build"]}' \
+          --comment "Deploy and Start Next.js App" \
+          --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","git pull","npm install -g pm2","npm install","npm run build","pm2 stop all","pm2 start npm --name nextjs-app -- run start","pm2 save"]}' \
           --region us-east-1 \
           --output text
-      - echo Starting Next.js app on EC2...
-      - |
-        aws ssm send-command \
-          --document-name "AWS-RunPowerShellScript" \
-          --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Start Next.js App on EC2" \
-          --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","Start-Process cmd -ArgumentList ''/c npm run start'' -NoNewWindow -WindowStyle Hidden"]}' \
-          --region us-east-1 \
-          --output text
-  post_build:
-  commands:
-    - echo Installing pm2 and deploying app on EC2...
-    - |
-      aws ssm send-command \
-        --document-name "AWS-RunPowerShellScript" \
-        --targets "Key=tag:Name,Values=WindowsInstance" \
-        --comment "Deploy and Start Next.js App" \
-        --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","git pull","npm install -g pm2","npm install","npm run build","pm2 stop all","pm2 start npm --name nextjs-app -- run start","pm2 save"]}' \
-        --region us-east-1 \
-        --output text
 
 artifacts:
   files:
