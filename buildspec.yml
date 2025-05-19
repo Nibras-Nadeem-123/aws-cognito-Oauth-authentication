@@ -1,4 +1,3 @@
-# buildspec.yml
 version: 0.2
 
 phases:
@@ -15,23 +14,23 @@ phases:
       - npm run build
 
   post_build:
-  commands:
-    - echo Logging into EC2 via SSM...
-    - >
-      aws ssm send-command \
-      --document-name "AWS-RunPowerShellScript" \
-      --targets "Key=tag:Name,Values=WindowsInstance" \
-      --comment "Deploy Next.js App" \
-      --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","git pull","npm install","npm run build"]}' \
-      --region us-east-1
-    - echo Starting app on remote server...
-    - >
-      aws ssm send-command \
-      --document-name "AWS-RunPowerShellScript" \
-      --targets "Key=tag:Name,Values=WindowsInstance" \
-      --comment "Start Next.js App" \
-      --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","Start-Process npm -ArgumentList ''run start'' -NoNewWindow -WindowStyle Hidden"]}' \
-      --region us-east-1
+    commands:
+      - echo Logging into EC2 via SSM...
+      - |
+        aws ssm send-command \
+          --document-name "AWS-RunPowerShellScript" \
+          --targets "Key=tag:Name,Values=WindowsInstance" \
+          --comment "Deploy Next.js App" \
+          --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","git pull","npm install","npm run build"]}' \
+          --region us-east-1
+      - echo Starting app on remote server...
+      - |
+        aws ssm send-command \
+          --document-name "AWS-RunPowerShellScript" \
+          --targets "Key=tag:Name,Values=WindowsInstance" \
+          --comment "Start Next.js App" \
+          --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","Start-Process npm -ArgumentList ''run start'' -NoNewWindow -WindowStyle Hidden"]}' \
+          --region us-east-1
 
 artifacts:
   files:
