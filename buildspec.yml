@@ -12,23 +12,22 @@ phases:
     commands:
       - echo "Building the Next.js app..."
       - npm run build
-
-  build:
-    commands:
       - echo "Packaging build for EC2 upload (manual or scripted)..."
       - mkdir -p packaged
+      - test -f package.json || (echo "Missing package.json" && exit 1)
+      - test -f Procfile || (echo "Missing Procfile" && exit 1)
       - zip -r nextjs-app.zip package.json .next node_modules pages public next.config.js Procfile
 
   post_build:
     commands:
-
+      - echo "Deploying to Windows EC2 via SSM..."
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
           --targets "Key=tag:Name,Values=WindowsInstance" \
           --comment "Deploy Next.js app from local zip" \
           --parameters '{"commands":[
-              "cd C:\\\\Users\\\\Administrator",
+              "cd C:\\Users\\Administrator",
               "if (Test-Path nextjs-app) { Remove-Item -Recurse -Force nextjs-app }",
               "Expand-Archive -Path nextjs-app.zip -DestinationPath nextjs-app -Force",
               "cd nextjs-app",
