@@ -9,6 +9,8 @@ phases:
       - npm ci
   build:
     commands:
+      - echo "Changing directory to src"
+      - cd src
       - echo "Running Next.js build"
       - npm run build
 
@@ -37,5 +39,5 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: '.next'   # Use 'out' if you do next export
+  base-directory: 'src/.next'   # Adjusted to src since build runs there
   discard-paths: yes
