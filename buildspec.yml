@@ -6,10 +6,11 @@ phases:
       nodejs: 18
     commands:
       - echo "CodeBuild install phase complete"
-
+      - npm ci
   build:
     commands:
       - echo "Skipping CodeBuild build step"
+      - npm run build
 
   post_build:
     commands:
@@ -32,3 +33,9 @@ phases:
           ]}' \
           --region us-east-1 \
           --output text
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.next'   # Change to 'out' if you use next export
+  discard-paths: yes
