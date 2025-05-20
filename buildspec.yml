@@ -16,6 +16,8 @@ phases:
   post_build:
     commands:
       - echo Deploying and starting app on EC2 via SSM...
+      - zip -r ../build-output.zip * .[^.]*
+
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
@@ -28,3 +30,7 @@ phases:
 artifacts:
   files:
     - '**/*'
+    - build-output.zip
+
+  discard-paths: yes
+  base-directory: . 
