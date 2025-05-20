@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000",
-    "aws-start": "next start -p 3389",
+    "aws-start": "next start -p 8080",
     "lint": "next lint"
   },
   "dependencies": {
