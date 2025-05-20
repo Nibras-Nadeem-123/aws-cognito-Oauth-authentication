@@ -5,32 +5,41 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing dependencies......
-      - npm install
+      - echo Installing dependencies...
+      - npm ci
 
   build:
     commands:
-      - echo Building Next.js app...
+      - echo Building the Next.js app...
       - npm run build
 
   post_build:
     commands:
-      - echo Deploying and starting app on EC2 via SSM...
-      - zip -r ../build-output.zip * .[^.]*
+      - echo Packaging build for EC2...
+      - mkdir -p packaged
+      - zip -r packaged/build.zip * .[^.]*
 
+      - echo Sending zip directly to EC2 via SSM...
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
           --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Deploy and Start Next.js App" \
-          --parameters '{"commands":["cd C:\\\\Users\\\\Administrator\\\\nextjs-app","git pull","npm install -g pm2","npm install","npm run build","pm2 stop all","pm2 start npm --name nextjs-app -- run start","pm2 save"]}' \
+          --comment "Copy and deploy Next.js app" \
+          --parameters '{"commands":[
+              "cd C:\\\\Users\\\\Administrator",
+              "if (Test-Path build.zip) { Remove-Item build.zip -Force }",
+              "[System.IO.File]::WriteAllBytes(\\\"build.zip\\\", [System.Convert]::FromBase64String(\\\"'$(base64 -w 0 packaged/build.zip)'\\\"))",
+              "Expand-Archive -Force build.zip nextjs-app",
+              "cd nextjs-app",
+              "npm install -g pm2",
+              "npm install",
+              "npm run build",
+              "pm2 stop all",
+              "pm2 start npm --name nextjs-app -- run start",
+              "pm2 save"
+          ]}' \
           --region us-east-1 \
           --output text
-
 artifacts:
   files:
-    - '**/*'
-    - build-output.zip
-
-  discard-paths: yes
-  base-directory: . 
+    - packaged/build.zip
