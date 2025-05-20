@@ -19,6 +19,8 @@ phases:
   post_build:
     commands:
       - echo "Triggering deployment on Windows EC2 via SSM"
+      - cp -r .next node_modules public package.json next.config.js deploy/
+
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
