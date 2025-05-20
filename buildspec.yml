@@ -17,7 +17,7 @@ phases:
     commands:
       - echo "Packaging build for EC2 upload (manual or scripted)..."
       - mkdir -p packaged
-      - zip -r nextjs-app.zip * .[^.]*
+      - zip -r nextjs-app.zip package.json .next node_modules pages public next.config.js Procfile
 
   post_build:
     commands:
