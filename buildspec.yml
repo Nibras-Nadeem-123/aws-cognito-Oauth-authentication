@@ -10,7 +10,7 @@ phases:
 
   build:
     commands:
-      - echo "No local build step needed for EC2 deployment"
+      - echo "Build phase - nothing to do for SSM git pull"
 
   post_build:
     commands:
@@ -28,8 +28,12 @@ phases:
               "npm ci",
               "npm run build",
               "pm2 stop all",
-              "pm2 start npm --name nextjs-app -- run start -- -H 0.0.0.0 -p 3000",
+              "pm2 start npm --name nextjs-app -- run start",
               "pm2 save"
           ]}' \
           --region us-east-1 \
           --output text
+
+artifacts:
+  files:
+    - '**/*'  # optional, or remove if unused
