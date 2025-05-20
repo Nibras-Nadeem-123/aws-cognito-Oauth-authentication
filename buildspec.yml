@@ -5,27 +5,20 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Installing dependencies..."
-      - npm ci
+      - echo "CodeBuild install phase complete"
 
   build:
     commands:
-      - npm run build
-
-  build:
-    commands:
-      - echo "Build phase - nothing to do for SSM git pull..."
+      - echo "Skipping CodeBuild build step"
 
   post_build:
     commands:
-      - echo "Triggering deployment on Windows EC2 via SSM"
-      - cp -r .next node_modules public package.json next.config.js deploy/
-
+      - echo "Triggering SSM command to EC2"
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
           --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Deploy Next.js app via git pull" \
+          --comment "Trigger Next.js build on EC2" \
           --parameters '{"commands":[
               "cd C:\\Users\\Administrator\\nextjs-app",
               "git reset --hard",
@@ -39,7 +32,3 @@ phases:
           ]}' \
           --region us-east-1 \
           --output text
-
-artifacts:
-  files:
-    - '**/*'  # optional, or remove if unused
