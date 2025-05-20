@@ -17,7 +17,7 @@ phases:
     commands:
       - echo "Packaging build for EC2 upload (manual or scripted)..."
       - mkdir -p packaged
-      - zip -r packaged/build.zip * .[^.]*
+      - zip -r nextjs-app.zip * .[^.]*
 
   post_build:
     commands:
@@ -44,4 +44,4 @@ phases:
 
 artifacts:
   files:
-    - packaged/build.zip
+    - nextjs-app.zip
