@@ -21,7 +21,6 @@ phases:
 
   post_build:
     commands:
-      - aws s3 cp packaged/build.zip s3://your-bucket-name/build.zip
 
       - |
         aws ssm send-command \
