@@ -14,7 +14,7 @@ phases:
 
   post_build:
     commands:
-      - echo "Triggering SSM command to EC2"
+      - echo "Triggering SSM command to EC2..."
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
