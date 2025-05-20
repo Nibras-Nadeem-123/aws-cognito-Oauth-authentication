@@ -1,11 +1,14 @@
 version: 0.2
 
+cache:
+  paths: []
+
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "CodeBuild install phase started"
+      - echo "Install phase started"
       - npm ci
   build:
     commands:
@@ -39,5 +42,5 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: 'src/.next'   # Adjusted to src since build runs there
+  base-directory: 'src/.next'
   discard-paths: yes
