@@ -5,21 +5,21 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "CodeBuild install phase complete"
+      - echo "CodeBuild install phase started"
       - npm ci
   build:
     commands:
-      - echo "Skipping CodeBuild build step"
+      - echo "Running Next.js build"
       - npm run build
 
   post_build:
     commands:
-      - echo "Triggering SSM command to EC2"
+      - echo "Triggering SSM command to EC2 instance"
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
           --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Trigger Next.js build on EC2" \
+          --comment "Deploy Next.js app on EC2" \
           --parameters '{"commands":[
               "cd C:\\Users\\Administrator\\nextjs-app",
               "git reset --hard",
@@ -37,5 +37,5 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: '.next'   # Change to 'out' if you use next export
+  base-directory: '.next'   # Use 'out' if you do next export
   discard-paths: yes
