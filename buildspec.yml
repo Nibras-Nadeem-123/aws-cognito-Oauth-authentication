@@ -10,6 +10,10 @@ phases:
 
   build:
     commands:
+      - npm run build
+
+  build:
+    commands:
       - echo "Build phase - nothing to do for SSM git pull..."
 
   post_build:
