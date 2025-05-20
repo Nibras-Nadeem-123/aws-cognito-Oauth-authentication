@@ -10,7 +10,7 @@ phases:
 
   build:
     commands:
-      - echo "Building the Next.js app..."
+      - echo "Building the Next.js app......"
       - npm run build
       - echo "Packaging build for EC2 upload (manual or scripted)..."
       - mkdir -p packaged
