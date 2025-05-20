@@ -5,22 +5,16 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Installing dependencies..."
-      - npm ci
+      - echo "Installing dependencies for buildspec..."
+      - npm ci  # optional, if CodeBuild still needs dependencies
 
   build:
     commands:
-      - echo "Building the Next.js app......"
-      - npm run build
-      - echo "Packaging build for EC2 upload (manual or scripted)..."
-      - mkdir -p packaged
-      - test -f package.json || (echo "Missing package.json" && exit 1)
-      - test -f Procfile || (echo "Missing Procfile" && exit 1)
-      - zip -r nextjs-app.zip * .[^.]*
+      - echo "No build actions needed for SSM-triggered EC2 deployment"
 
   post_build:
     commands:
-      - echo "Deploying to Windows EC2 via SSM..."
+      - echo "Triggering deployment on Windows EC2 via SSM"
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
@@ -41,5 +35,4 @@ phases:
           --output text
 
 artifacts:
-  files:
-    - '**/*'
+  files: []  # 👈 This disables outputting files to Elastic Beanstalk
