@@ -13,7 +13,10 @@ phases:
       - npm run build
   post_build:
     commands:
-      - echo Deploying via SSM...
+      - echo "Sending SSM command to Windows EC2..."
+      - echo "Checking AWS CLI version:"
+      - aws --version
+      - echo "Running send-command:"
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
