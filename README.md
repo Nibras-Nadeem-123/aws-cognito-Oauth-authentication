@@ -83,24 +83,28 @@ Replace the contents of lib/my-cicd-pipeline-stack.ts:
 ``` 
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
 import * as cpactions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
-export class MyCicdPipelineStack extends cdk.Stack {
+export class Ec2CicdStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // 🔐 GitHub Token from Secrets Manager
     const githubToken = cdk.SecretValue.secretsManager('GITHUB_TOKEN_NAME');
 
     const sourceOutput = new codepipeline.Artifact();
     const buildOutput = new codepipeline.Artifact();
 
-    const pipeline = new codepipeline.Pipeline(this, 'MyPipeline', {
-      pipelineName: 'MyAppPipeline',
+    const pipeline = new codepipeline.Pipeline(this, 'MyEC2Pipeline', {
+      pipelineName: 'MyAppEC2Pipeline',
     });
 
+    // 👨‍💻 Source Stage
     pipeline.addStage({
       stageName: 'Source',
       actions: [
@@ -115,6 +119,7 @@ export class MyCicdPipelineStack extends cdk.Stack {
       ],
     });
 
+    // 🔧 Build Stage
     const buildProject = new codebuild.PipelineProject(this, 'BuildProject', {
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '0.2',
@@ -127,7 +132,6 @@ export class MyCicdPipelineStack extends cdk.Stack {
           },
         },
         artifacts: {
-          'base-directory': 'out',
           files: ['**/*'],
         },
       }),
@@ -145,9 +149,52 @@ export class MyCicdPipelineStack extends cdk.Stack {
       ],
     });
 
-    // Optional: Add deploy stage here
+    // Replace with your actual EC2 instance ID
+    const instanceId = 'i-0abc123456789xyz';
+
+    // 🖥️ Deploy Stage via SSM
+    const deployAction = new cpactions.CodeBuildAction({
+      actionName: 'DeployToEC2',
+      project: new codebuild.PipelineProject(this, 'SSMDeployProject', {
+        buildSpec: codebuild.BuildSpec.fromObject({
+          version: '0.2',
+          phases: {
+            build: {
+              commands: [
+                `aws ssm send-command \\`,
+                `  --document-name "AWS-RunShellScript" \\`,
+                `  --targets '[{"Key":"InstanceIds","Values":["${instanceId}"]}]' \\`,
+                `  --parameters '{"commands":["cd /home/ec2-user/myapp && git pull && npm install && npm run build && pm2 restart app"]}' \\`,
+                `  --region ${this.region}`
+              ],
+            },
+          },
+        }),
+        environment: {
+          buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+          privileged: true,
+        },
+        environmentVariables: {
+          INSTANCE_ID: { value: instanceId },
+        },
+        role: new iam.Role(this, 'DeployRole', {
+          assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
+          managedPolicies: [
+            iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMFullAccess'),
+            iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ReadOnlyAccess'),
+          ],
+        }),
+      }),
+      input: buildOutput,
+    });
+
+    pipeline.addStage({
+      stageName: 'Deploy',
+      actions: [deployAction],
+    });
   }
 }
+
 ```
 ✅ Note: Store your GitHub token in AWS Secrets Manager as GITHUB_TOKEN_NAME.
 
@@ -156,14 +203,4 @@ export class MyCicdPipelineStack extends cdk.Stack {
 cdk bootstrap
 cdk deploy
 ```
-📘 Optional: Deploy to EC2 or S3
-You can use the final stage to:
-
-Deploy a static site to S3
-
-Run EC2 deployment scripts via SSM (e.g., aws ssm send-command)
-
-🧼 Clean Up
-``` 
-cdk destroy
-```
+ 
