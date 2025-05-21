@@ -21,7 +21,7 @@ phases:
           --targets "Key=tag:Name,Values=WindowsInstance" \
           --comment "Trigger Next.js Deployment" \
           --parameters commands=["cd C:\\Users\\Administrator\\nextjs-app", "git pull", "npm install", "npm run build", "pm2 restart nextjs-app"] \
-          --region YOUR_AWS_REGION
+          --region us-east-1
 
 artifacts:
   files:
