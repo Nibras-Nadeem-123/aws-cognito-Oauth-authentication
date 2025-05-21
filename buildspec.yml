@@ -5,36 +5,25 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Installing dependencies..."
-      - npm ci
-
+      - echo Installing dependencies
+      - npm install
   build:
     commands:
-      - echo "Build phase - nothing to do for SSM git pull..."
+      - echo Building the Next.js application...
       - npm run build
-      
+
   post_build:
-    commands:
-      - echo "Triggering deployment on Windows EC2 via SSM"
-      - |
-        aws ssm send-command \
-          --document-name "AWS-RunPowerShellScript" \
-          --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Deploy Next.js app via git pull" \
-          --parameters '{"commands":[
-              "cd C:\\Users\\Administrator\\nextjs-app",
-              "git reset --hard",
-              "git pull origin main",
-              "npm install -g pm2",
-              "npm ci",
-              "npm run build",
-              "pm2 stop all",
-              "pm2 start npm --name nextjs-app -- run start",
-              "pm2 save"
-          ]}' \
-          --region us-east-1 \
-          --output text
+  commands:
+    - echo Deploying to EC2 via SSM
+    - |
+      aws ssm send-command \
+        --document-name "AWS-RunPowerShellScript" \
+        --targets "Key=tag:Name,Values=WindowsInstance" \
+        --comment "Trigger Next.js Deployment" \
+        --parameters commands=["cd C:\\Users\\Administrator\\nextjs-app", "git pull", "npm install", "npm run build", "pm2 restart nextjs-app"] \
+        --region YOUR_AWS_REGION
 
 artifacts:
   files:
-    - '**/*'  # optional, or remove if unused
+    - '**/*'
+  base-directory: .next
