@@ -1,4 +1,4 @@
-{
+globalThis.__BUILD_MANIFEST = {
   "pages": {
     "/_app": []
   },
@@ -7,10 +7,7 @@
   "polyfillFiles": [
     "static/chunks/node_modules_next_dist_build_polyfills_polyfill-nomodule.js"
   ],
-  "lowPriorityFiles": [
-    "static/development/_ssgManifest.js",
-    "static/development/_buildManifest.js"
-  ],
+  "lowPriorityFiles": [],
   "rootMainFiles": [
     "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_fd44f5a4._.js",
     "static/chunks/node_modules_next_dist_compiled_2ce9398a._.js",
@@ -21,4 +18,9 @@
     "static/chunks/_93808211._.js"
   ],
   "ampFirstPages": []
-}
+};
+globalThis.__BUILD_MANIFEST.lowPriorityFiles = [
+"/static/" + process.env.__NEXT_BUILD_ID + "/_buildManifest.js",
+,"/static/" + process.env.__NEXT_BUILD_ID + "/_ssgManifest.js",
+
+];
