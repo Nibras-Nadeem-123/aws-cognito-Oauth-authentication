@@ -94,17 +94,17 @@ export class Ec2CicdStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // 🔐 GitHub Token from Secrets Manager
+    // GitHub Token from Secrets Manager
     const githubToken = cdk.SecretValue.secretsManager('GITHUB_TOKEN_NAME');
 
     const sourceOutput = new codepipeline.Artifact();
     const buildOutput = new codepipeline.Artifact();
 
-    const pipeline = new codepipeline.Pipeline(this, 'MyEC2Pipeline', {
-      pipelineName: 'MyAppEC2Pipeline',
+    const pipeline = new codepipeline.Pipeline(this, 'your-pipeline-name', {
+      pipelineName: 'your-pipeline-name',
     });
 
-    // 👨‍💻 Source Stage
+    // Source Stage
     pipeline.addStage({
       stageName: 'Source',
       actions: [
@@ -119,8 +119,8 @@ export class Ec2CicdStack extends cdk.Stack {
       ],
     });
 
-    // 🔧 Build Stage
-    const buildProject = new codebuild.PipelineProject(this, 'BuildProject', {
+    //  Build Stage
+    const buildProject = new codebuild.PipelineProject(this, 'buildProject', {
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
@@ -149,10 +149,9 @@ export class Ec2CicdStack extends cdk.Stack {
       ],
     });
 
-    // Replace with your actual EC2 instance ID
-    const instanceId = 'i-0abc123456789xyz';
+    const instanceId = 'your-instance-id';
 
-    // 🖥️ Deploy Stage via SSM
+    // Deploy Stage via SSM
     const deployAction = new cpactions.CodeBuildAction({
       actionName: 'DeployToEC2',
       project: new codebuild.PipelineProject(this, 'SSMDeployProject', {
