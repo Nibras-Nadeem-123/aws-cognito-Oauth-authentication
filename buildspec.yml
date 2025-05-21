@@ -8,12 +8,10 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Install phase started..."
+      - echo "Install phase started"
       - npm ci
   build:
     commands:
-      - echo "Changing directory to src"
-      - cd src
       - echo "Running Next.js build"
       - npm run build
 
@@ -42,5 +40,5 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: 'src/.next'
+  base-directory: '.next'
   discard-paths: yes
