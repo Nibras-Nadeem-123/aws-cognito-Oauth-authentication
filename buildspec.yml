@@ -13,15 +13,15 @@ phases:
       - npm run build
 
   post_build:
-  commands:
-    - echo Deploying to EC2 via SSM
-    - |
-      aws ssm send-command \
-        --document-name "AWS-RunPowerShellScript" \
-        --targets "Key=tag:Name,Values=WindowsInstance" \
-        --comment "Trigger Next.js Deployment" \
-        --parameters commands=["cd C:\\Users\\Administrator\\nextjs-app", "git pull", "npm install", "npm run build", "pm2 restart nextjs-app"] \
-        --region YOUR_AWS_REGION
+    commands:
+      - echo Deploying to EC2 via SSM
+      - |
+        aws ssm send-command \
+          --document-name "AWS-RunPowerShellScript" \
+          --targets "Key=tag:Name,Values=WindowsInstance" \
+          --comment "Trigger Next.js Deployment" \
+          --parameters commands=["cd C:\\Users\\Administrator\\nextjs-app", "git pull", "npm install", "npm run build", "pm2 restart nextjs-app"] \
+          --region YOUR_AWS_REGION
 
 artifacts:
   files:
