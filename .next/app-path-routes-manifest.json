@@ -1,0 +1,13 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/auth/callback/google/page": "/auth/callback/google",
+  "/auth/callback/microsoft/page": "/auth/callback/microsoft",
+  "/auth/dashBoard/page": "/auth/dashBoard",
+  "/page": "/",
+  "/auth/login/page": "/auth/login",
+  "/auth/forgotPassword/page": "/auth/forgotPassword",
+  "/auth/product/page": "/auth/product",
+  "/auth/signup/page": "/auth/signup",
+  "/auth/verify/page": "/auth/verify"
+}
