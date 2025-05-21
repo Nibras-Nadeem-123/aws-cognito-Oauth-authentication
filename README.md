@@ -63,22 +63,16 @@ If you're new to DevOps or AWS, this guide is for you!
 - GitHub repo with your code
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) configured
 - Node.js & AWS CDK:
-  ```bash
+  ``` 
   npm install -g aws-cdk
 🏗️ Setup Instructions
 1. Initialize CDK Project
 ```
-    bash
-    Copy
-    Edit
     mkdir my-cicd-pipeline && cd my-cicd-pipeline
     cdk init app --language typescript
     Install necessary packages:
 ```
 ```
-    bash
-    Copy
-    Edit
     npm install aws-cdk-lib constructs
     npm install @aws-cdk/aws-codepipeline @aws-cdk/aws-codepipeline-actions @aws-cdk/aws-codebuild @aws-cdk/aws-secretsmanager
 ```
@@ -86,10 +80,7 @@ If you're new to DevOps or AWS, this guide is for you!
 2. Add CI/CD Code to Stack
 Replace the contents of lib/my-cicd-pipeline-stack.ts:
 
-```
-ts
-Copy
-Edit
+``` 
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
@@ -161,10 +152,7 @@ export class MyCicdPipelineStack extends cdk.Stack {
 ✅ Note: Store your GitHub token in AWS Secrets Manager as GITHUB_TOKEN_NAME.
 
 3. Deploy the Pipeline
-```
-bash
-Copy
-Edit
+``` 
 cdk bootstrap
 cdk deploy
 ```
@@ -176,8 +164,6 @@ Deploy a static site to S3
 Run EC2 deployment scripts via SSM (e.g., aws ssm send-command)
 
 🧼 Clean Up
-```bash
-Copy
-Edit
+``` 
 cdk destroy
 ```
