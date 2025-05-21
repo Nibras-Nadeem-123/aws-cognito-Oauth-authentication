@@ -36,4 +36,11 @@ phases:
 
 artifacts:
   files:
-    - '/*'  # optional, or remove if unused
+    - '**/*'
+  base-directory: '.next'  # or 'out' if using `next export`
+  discard-paths: yes
+  secondary-artifacts:
+    fallback:
+      base-directory: '.'
+      files:
+        - '**/*'
