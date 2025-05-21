@@ -71,7 +71,7 @@ If you're new to DevOps or AWS, this guide is for you!
     mkdir my-cicd-pipeline && cd my-cicd-pipeline
     cdk init app --language typescript
 ```
-    Install necessary packages:
+- Install necessary packages:
 ```
     npm install aws-cdk-lib constructs
     npm install @aws-cdk/aws-codepipeline @aws-cdk/aws-codepipeline-actions @aws-cdk/aws-codebuild @aws-cdk/aws-secretsmanager
