@@ -34,7 +34,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details. -->
 
 
-# 🚀 CI/CD Pipeline in AWS Using CDK (Beginner Friendly)
+# CI/CD Pipeline in AWS Using CDK (Beginner Friendly)
 
 This project shows you how to build a simple **CI/CD pipeline using AWS CDK** (TypeScript), **CodePipeline**, **CodeBuild**, and **GitHub** as the source.
 
@@ -42,14 +42,14 @@ If you're new to DevOps or AWS, this guide is for you!
 
 ---
 
-## 🧠 What is CI/CD?
+## What is CI/CD?
 
 - **CI (Continuous Integration):** Automatically builds and tests your code when you push changes.
 - **CD (Continuous Deployment):** Automatically deploys your code after successful builds/tests.
 
 ---
 
-## 🛠️ Tools Used
+## Tools Used
 
 - [AWS CDK (TypeScript)](https://docs.aws.amazon.com/cdk/latest/guide/home.html)
 - [AWS CodePipeline](https://aws.amazon.com/codepipeline/)
@@ -58,14 +58,14 @@ If you're new to DevOps or AWS, this guide is for you!
 
 ---
 
-## 📦 Prerequisites
+## Prerequisites
 
 - GitHub repo with your code
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) configured
 - Node.js & AWS CDK:
   ``` 
   npm install -g aws-cdk
-🏗️ Setup Instructions
+# Setup Instructions
 1. Initialize CDK Project
 ```
     mkdir my-cicd-pipeline && cd my-cicd-pipeline
@@ -195,7 +195,7 @@ export class Ec2CicdStack extends cdk.Stack {
 }
 
 ```
-✅ Note: Store your GitHub token in AWS Secrets Manager as GITHUB_TOKEN_NAME.
+Note: Store your GitHub token in AWS Secrets Manager as GITHUB_TOKEN_NAME.
 
 3. Deploy the Pipeline
 ``` 
