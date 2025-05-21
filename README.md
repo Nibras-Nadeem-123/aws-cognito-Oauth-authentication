@@ -312,3 +312,12 @@ export class MyPipelineStack extends cdk.Stack {
 }
 
 ```
+
+## Result
+Every time you push to main:
+
+1. CodePipeline pulls your repo from GitHub
+
+2. CodeBuild installs dependencies and builds the site
+
+3. The built static files are deployed to the S3 bucket
