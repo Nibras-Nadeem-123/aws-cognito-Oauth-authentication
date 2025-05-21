@@ -8,16 +8,17 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Install phase started"
+      - echo " Install phase started"
       - npm ci
+
   build:
     commands:
-      - echo "Running Next.js build"
-      - npm run build
+      - echo "🏗️ Building Next.js app"
+      - npm run build || { echo " Build failed"; exit 1; }
 
   post_build:
     commands:
-      - echo "Triggering SSM command to EC2 instance"
+      - echo " Triggering SSM command to deploy on EC2 instance"
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
@@ -40,5 +41,5 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: '.next'
+  base-directory: '.next'   # Or 'out' if using `next export`
   discard-paths: yes
