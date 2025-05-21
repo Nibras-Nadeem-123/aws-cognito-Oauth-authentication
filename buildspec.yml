@@ -1,29 +1,25 @@
 version: 0.2
 
-cache:
-  paths: []
-
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo " Install phase started"
+      - echo "Installing dependencies..."
       - npm ci
 
   build:
     commands:
-      - echo "🏗️ Building Next.js app"
-      - npm run build || { echo " Build failed"; exit 1; }
+      - echo "Build phase - nothing to do for SSM git pull..."
 
   post_build:
     commands:
-      - echo " Triggering SSM command to deploy on EC2 instance"
+      - echo "Triggering deployment on Windows EC2 via SSM"
       - |
         aws ssm send-command \
           --document-name "AWS-RunPowerShellScript" \
           --targets "Key=tag:Name,Values=WindowsInstance" \
-          --comment "Deploy Next.js app on EC2" \
+          --comment "Deploy Next.js app via git pull" \
           --parameters '{"commands":[
               "cd C:\\Users\\Administrator\\nextjs-app",
               "git reset --hard",
@@ -40,6 +36,4 @@ phases:
 
 artifacts:
   files:
-    - '**/*'
-  base-directory: '.next'   # Or 'out' if using `next export`
-  discard-paths: yes
+    - '/*'  # optional, or remove if unused
