@@ -202,4 +202,113 @@ Note: Store your GitHub token in AWS Secrets Manager as GITHUB_TOKEN_NAME.
 cdk bootstrap
 cdk deploy
 ```
- 
+
+If a user wants to use an S3 bucket for deployment instead of deploying to EC2, the CI/CD pipeline changes as follows:
+
+# Scenario:
+The user is deploying a static site (e.g., Next.js static export, HTML/CSS/JS) to an S3 bucket configured as a static website host.
+
+You just add this block near the top of the constructor of your CDK stack:
+```
+// Create S3 bucket for static website hosting
+const websiteBucket = new s3.Bucket(this, 'WebsiteBucket', {
+  websiteIndexDocument: 'index.html',
+  websiteErrorDocument: '404.html',
+  publicReadAccess: true,
+  removalPolicy: cdk.RemovalPolicy.DESTROY,     // Auto-remove bucket on `cdk destroy`
+  autoDeleteObjects: true,                      // Deletes objects when bucket is deleted
+});
+
+```
+
+## Example in Full Context
+```
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
+import * as cpactions from 'aws-cdk-lib/aws-codepipeline-actions';
+import * as codebuild from 'aws-cdk-lib/aws-codebuild';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
+
+export class MyPipelineStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const githubToken = cdk.SecretValue.secretsManager('GITHUB_TOKEN_NAME');
+
+    // Create S3 Bucket
+    const websiteBucket = new s3.Bucket(this, 'WebsiteBucket', {
+      websiteIndexDocument: 'index.html',
+      websiteErrorDocument: '404.html',
+      publicReadAccess: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+
+    const sourceOutput = new codepipeline.Artifact();
+    const buildOutput = new codepipeline.Artifact();
+
+    const pipeline = new codepipeline.Pipeline(this, 'StaticSitePipeline');
+
+    // Source Stage
+    pipeline.addStage({
+      stageName: 'Source',
+      actions: [
+        new cpactions.GitHubSourceAction({
+          actionName: 'GitHub_Source',
+          owner: 'your-github-username',
+          repo: 'your-repo-name',
+          oauthToken: githubToken,
+          output: sourceOutput,
+          branch: 'main',
+        }),
+      ],
+    });
+
+    // Build Stage
+    const buildProject = new codebuild.PipelineProject(this, 'BuildProject', {
+      buildSpec: codebuild.BuildSpec.fromObject({
+        version: '0.2',
+        phases: {
+          install: {
+            commands: ['npm install'],
+          },
+          build: {
+            commands: ['npm run build'],
+          },
+        },
+        artifacts: {
+          'base-directory': 'out', // or 'dist' depending on your framework
+          files: ['**/*'],
+        },
+      }),
+    });
+
+    pipeline.addStage({
+      stageName: 'Build',
+      actions: [
+        new cpactions.CodeBuildAction({
+          actionName: 'Build',
+          project: buildProject,
+          input: sourceOutput,
+          outputs: [buildOutput],
+        }),
+      ],
+    });
+
+    // Deploy Stage
+    pipeline.addStage({
+      stageName: 'Deploy',
+      actions: [
+        new cpactions.S3DeployAction({
+          actionName: 'Deploy_to_S3',
+          bucket: websiteBucket,
+          input: buildOutput,
+        }),
+      ],
+    });
+  }
+}
+
+```
